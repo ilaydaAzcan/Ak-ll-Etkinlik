@@ -1,0 +1,79 @@
+﻿@model AkıllıEtkinlik.Models.LoginViewModel
+
+<div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="card p-4" style="width: 350px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1);">
+        <h2 class="text-center mb-4">Giriş Yap</h2>
+
+        @using (Html.BeginForm())
+        {
+            <div class="mb-3">
+                <label for="UserType" class="form-label">Kullanıcı Çeşiti</label>
+                <select id="UserType" name="UserType" class="form-select" onchange="updateLabels()">
+                    <option value="User">Kullanıcı</option>
+                    <option value="Admin">Admin</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="Username" id="usernameLabel" class="form-label">Kullanıcı Adı</label>
+                <input type="text" id="Username" name="Username" class="form-control" placeholder="Kullanıcı adı " required />
+            </div>
+
+            <div class="mb-3">
+                <label for="Password" id="passwordLabel" class="form-label">Şifre</label>
+                <div class="input-group">
+                    <input type="password" id="Password" name="Password" class="form-control" placeholder="Şifre" required />
+                    <button type="button" class="btn btn-outline-secondary" style="font-weight: bold;" onclick="togglePasswordVisibility()">Göster</button>
+                </div>
+            </div>
+
+            <div class="mb-3 text-end">
+                <a href="/Home/ForgotPassword" class="text-decoration-none">Şifremi Unuttum</a>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Giriş Yap</button>
+
+            <!-- Kaydol bağlantısı, başlangıçta gizli -->
+            <div class="text-center mt-3" id="registerLink" style="display: none;">
+                <a href="/Home/Register" class="text-decoration-none">Kaydol</a>
+            </div>
+
+        }
+    </div>
+</div>
+
+<script>
+    function updateLabels() {
+        var userType = document.getElementById("UserType").value;
+        var usernameLabel = document.getElementById("usernameLabel");
+        var passwordLabel = document.getElementById("passwordLabel");
+        var registerLink = document.getElementById("registerLink");
+
+        if (userType === "Admin") {
+            usernameLabel.innerText = "Admin Adı";
+            passwordLabel.innerText = "Şifre";
+            registerLink.style.display = "none"; // "Kaydol" bağlantısını gizle
+        } else {
+            usernameLabel.innerText = "Kullanıcı Adı";
+            passwordLabel.innerText = "Şifre";
+            registerLink.style.display = "block"; // "Kaydol" bağlantısını göster
+        }
+    }
+
+    // Sayfa yüklendiğinde kullanıcı tipi seçiliyse etiketleri güncelle
+    document.addEventListener("DOMContentLoaded", updateLabels);
+
+    // Şifre Göster/Gizle Fonksiyonu
+    function togglePasswordVisibility() {
+        var passwordField = document.getElementById("Password");
+        var showButton = event.target;
+
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            showButton.innerText = "Gizle";
+        } else {
+            passwordField.type = "password";
+            showButton.innerText = "Göster";
+        }
+    }
+</script>

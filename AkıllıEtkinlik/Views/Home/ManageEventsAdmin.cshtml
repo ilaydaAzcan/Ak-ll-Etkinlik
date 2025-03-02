@@ -1,0 +1,98 @@
+﻿@model IEnumerable<AkıllıEtkinlik.Models.Event>
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Etkinliklerimi Yönet</title>
+    <!-- Hata veya başarı mesajı -->
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+    <style>
+        .event-table {
+            margin-top: 50px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+            .event-table th {
+                background-color: #007bff;
+                color: #ffffff;
+            }
+
+        .event-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Etkinliklerimi Yönet</h2>
+
+        <table class="table table-striped event-table">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Etkinlik Resmi</th>
+                    <th>Etkinlik Adı</th>
+                    <th>Açıklama</th>
+                    <th>Tarih</th>
+                    <th>Saat</th>
+                    <th>Konum</th>
+                    <th>Kategori</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var etkinlik in Model)
+                {
+                    <tr>
+                        <td>
+                            @if (!string.IsNullOrEmpty(etkinlik.ResimYolu))
+                            {
+                                <img src="@Url.Content(etkinlik.ResimYolu)" alt="Etkinlik Resmi" class="event-image" />
+                            }
+                            else
+                            {
+                                <img src="https://via.placeholder.com/100" alt="Varsayılan Resim" class="event-image" />
+                            }
+                        </td>
+                        <td>@etkinlik.EtkinlikAdi</td>
+                        <td>@etkinlik.Aciklama</td>
+                        <td>@etkinlik.Tarih.ToString("yyyy-MM-dd")</td>
+                        <td>@etkinlik.Saat.ToString(@"hh\:mm")</td>
+                        <td>@etkinlik.Konum</td>
+                        <td>@etkinlik.Kategori</td>
+                        <td>
+                            <!-- Düzenleme Butonu -->
+                            <a href="@Url.Action("EditEventAdmin", "Home", new { id = etkinlik.Id })" class="btn btn-primary btn-sm mb-1">Düzenle</a>
+
+                            <!-- Silme Formu -->
+                            <form action="@Url.Action("DeleteEventAdmin", "Home")" method="post" style="display:inline;">
+                                <input type="hidden" name="id" value="@etkinlik.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Etkinliği silmek istediğinize emin misiniz?');">Sil</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+</body>
+</html>

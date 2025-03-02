@@ -1,0 +1,82 @@
+﻿@model IEnumerable<AkıllıEtkinlik.Models.Kullanici>
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Kullanıcıları Yönet</title>
+    <style>
+        .user-table {
+            margin-top: 50px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+            .user-table th {
+                background-color: #007bff;
+                color: #ffffff;
+            }
+
+        .profile-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Kullanıcıları Yönet</h2>
+
+        <table class="table table-striped user-table">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Profil Resmi</th>
+                    <th>Kullanıcı Adı</th>
+                    <th>Ad</th>
+                    <th>Soyad</th>
+                    <th>Email</th>
+                    <th>Telefon</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var kullanici in Model)
+                {
+                    <tr>
+                        <td>
+                            @if (!string.IsNullOrEmpty(kullanici.ProfilFoto))
+                            {
+                                <img src="@Url.Content(kullanici.ProfilFoto)" alt="Profil Resmi" class="profile-image" />
+                            }
+                            else
+                            {
+                                <img src="https://via.placeholder.com/80" alt="Varsayılan Resim" class="profile-image" />
+                            }
+                        </td>
+                        <td>@kullanici.KullaniciAdi</td>
+                        <td>@kullanici.Ad</td>
+                        <td>@kullanici.Soyad</td>
+                        <td>@kullanici.Email</td>
+                        <td>@kullanici.TelefonNumarasi</td>
+                        <td>
+                            <!-- Düzenleme Butonu -->
+                            <a href="@Url.Action("EditUser", "Home", new { id = kullanici.Id })" class="btn btn-primary btn-sm mb-1">Düzenle</a>
+
+                            <!-- Silme Formu -->
+                            <form action="@Url.Action("DeleteUser", "Home")" method="post" style="display:inline;">
+                                <input type="hidden" name="id" value="@kullanici.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Kullanıcıyı silmek istediğinize emin misiniz?');">Sil</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

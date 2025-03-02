@@ -1,0 +1,17 @@
+﻿
+
+<div class="container mt-5">
+    <h2>@Model.EtkinlikAdi</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <img src="@Model.ResimYolu" alt="Etkinlik Resmi" class="img-thumbnail" />
+        </div>
+        <div class="col-md-6">
+            <p><strong>Açıklama:</strong> @Model.Aciklama</p>
+            <p><strong>Tarih:</strong> @Model.Tarih.ToString("yyyy-MM-dd")</p>
+            <p><strong>Saat:</strong> @Model.Saat.ToString(@"hh\:mm")</p>
+            <p><strong>Konum:</strong> @Model.Konum</p>
+            <p><strong>Kategori:</strong> @Model.Kategori</p>
+        </div>
+    </div>
+</div>

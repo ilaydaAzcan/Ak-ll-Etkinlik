@@ -1,0 +1,74 @@
+﻿@model IEnumerable<AkıllıEtkinlik.Models.Event>
+
+
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>Katıldığım Etkinlikler</title>
+    <style>
+        table {
+            width: 100%;
+            margin-top: 50px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: #ffffff;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #dddddd;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .event-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="mb-4">Katıldığım Etkinlikler</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Etkinlik Resmi</th>
+                    <th>Etkinlik Adı</th>
+                    <th>Açıklama</th>
+                    <th>Tarih</th>
+                    <th>Saat</th>
+                    <th>Konum</th>
+                    <th>Kategori</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var etkinlik in Model)
+                {
+                    <tr>
+                        <td><img src="@etkinlik.ResimYolu" alt="Etkinlik Resmi" class="event-image"></td>
+                        <td>@etkinlik.EtkinlikAdi</td>
+                        <td>@etkinlik.Aciklama</td>
+                        <td>@etkinlik.Tarih.ToString("yyyy-MM-dd")</td>
+                        <td>@etkinlik.Saat</td>
+                        <td>@etkinlik.Konum</td>
+                        <td>@etkinlik.Kategori</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

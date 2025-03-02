@@ -1,0 +1,54 @@
+﻿@model AkıllıEtkinlik.Models.Event
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Etkinlik Düzenle</title>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Etkinlik Düzenle</h2>
+        <form action="/Home/EditEvent" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="Id" value="@Model.Id" />
+            <div class="form-group">
+                <label for="EtkinlikAdi">Etkinlik Adı:</label>
+                <input type="text" class="form-control" id="EtkinlikAdi" name="EtkinlikAdi" value="@Model.EtkinlikAdi" required>
+            </div>
+            <div class="form-group">
+                <label for="Aciklama">Açıklama:</label>
+                <textarea class="form-control" id="Aciklama" name="Aciklama" required>@Model.Aciklama</textarea>
+            </div>
+            <div class="form-group">
+                <label for="Tarih">Tarih:</label>
+                <input type="date" class="form-control" id="Tarih" name="Tarih" value="@Model.Tarih.ToString("yyyy-MM-dd")" required>
+            </div>
+            <div class="form-group">
+                <label for="Saat">Saat:</label>
+                <input type="time" class="form-control" id="Saat" name="Saat" value="@Model.Saat.ToString(@"hh\:mm")" required>
+            </div>
+            <div class="form-group">
+                <label for="Konum">Konum:</label>
+                <input type="text" class="form-control" id="Konum" name="Konum" value="@Model.Konum" required>
+            </div>
+            <div class="form-group">
+                <label for="Kategori">Kategori:</label>
+                <input type="text" class="form-control" id="Kategori" name="Kategori" value="@Model.Kategori" required>
+            </div>
+            <div class="form-group">
+                <label for="Resim">Etkinlik Resmi:</label>
+                <input type="file" class="form-control-file" id="Resim" name="Resim">
+                @if (!string.IsNullOrEmpty(Model.ResimYolu))
+                {
+                    <div class="mt-2">
+                        <img src="@Model.ResimYolu" alt="Etkinlik Resmi" width="200">
+                    </div>
+                }
+            </div>
+            <button type="submit" class="btn btn-primary">Kaydet</button>
+        </form>
+    </div>
+</body>
+</html>

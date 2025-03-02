@@ -1,0 +1,107 @@
+﻿
+@model IEnumerable<AkıllıEtkinlik.Models.Event>
+
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <title>Etkinlikleri Onaylama Sayfası</title>
+    <style>
+        body {
+            background: #f0f2f5;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .table th {
+            background: #343a40;
+            color: white;
+        }
+
+        .table td img {
+            width: 100px;
+            height: auto;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Etkinlikleri Onaylama Sayfası</h2>
+        <div class="table-responsive table-container">
+            @if (Model != null && Model.Any())
+            {
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Etkinlik Resmi</th>
+                            <th>Etkinlik Adı</th>
+                            <th>Açıklama</th>
+                            <th>Tarih</th>
+                            <th>Saat</th>
+                            <th>Konum</th>
+                            <th>Kategori</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var etkinlik in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <img src="@etkinlik.ResimYolu" alt="Etkinlik Resmi">
+                                </td>
+                                <td>@etkinlik.EtkinlikAdi</td>
+                                <td>@etkinlik.Aciklama</td>
+                                <td>@etkinlik.Tarih.ToString("yyyy-MM-dd")</td>
+                                <td>@etkinlik.Saat.ToString(@"hh\:mm")</td>
+                                <td>@etkinlik.Konum</td>
+                                <td>@etkinlik.Kategori</td>
+                                <td>
+                                    <button class="btn btn-success onayla-button" data-id="@etkinlik.Id">Onayla</button>
+                                    <button class="btn btn-danger reddet-button" data-id="@etkinlik.Id">Reddet</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="text-center">Onaylanacak etkinlik bulunmamaktadır.</p>
+            }
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('.onayla-button').click(function () {
+                var id = $(this).data('id');
+                $.post('/Home/OnaylaEtkinlik', { id: id }, function () {
+                    location.reload(); // Sayfayı yeniden yükleyin
+                });
+            });
+
+            $('.reddet-button').click(function () {
+                var id = $(this).data('id');
+                $.post('/Home/ReddetEtkinlik', { id: id }, function () {
+                    location.reload(); // Sayfayı yeniden yükleyin
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

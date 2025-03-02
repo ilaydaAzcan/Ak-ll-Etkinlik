@@ -1,0 +1,91 @@
+﻿@model AkıllıEtkinlik.Models.RegisterViewModel
+
+<div class="d-flex justify-content-center align-items-center" style="min-height: 100vh; background-color: #f8f9fa;">
+    <div class="card p-4" style="width: 100%; max-width: 800px; box-shadow: 0px 5px 15px rgba(0,0,0,0.2); border-radius: 10px;">
+        <h2 class="text-center mb-4">Kayıt Ol</h2>
+
+
+
+        @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="Username" class="form-label">Kullanıcı Adı</label>
+                    <input type="text" id="Username" name="Username" class="form-control rounded-pill px-3" required />
+                    @Html.ValidationMessage("Username", "", new { @class = "text-danger" })
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="Email" class="form-label">E-posta</label>
+                    <input type="email" id="Email" name="Email" class="form-control rounded-pill px-3" required />
+                    @Html.ValidationMessage("Email", "", new { @class = "text-danger" })
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="Password" class="form-label">Şifre</label>
+                    <input type="password" id="Password" name="Password" class="form-control rounded-pill px-3" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="ConfirmPassword" class="form-label">Şifre Doğulama</label>
+                    <input type="password" id="ConfirmPassword" name="ConfirmPassword" class="form-control rounded-pill px-3" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="FirstName" class="form-label">Ad</label>
+                    <input type="text" id="FirstName" name="FirstName" class="form-control rounded-pill px-3" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="LastName" class="form-label">Soyad</label>
+                    <input type="text" id="LastName" name="LastName" class="form-control rounded-pill px-3" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="BirthDate" class="form-label">Doğum Tarihi</label>
+                    <input type="date" id="BirthDate" name="BirthDate" class="form-control rounded-pill px-3" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="Gender" class="form-label">Cinsiyet</label>
+                    <select id="Gender" name="Gender" class="form-select rounded-pill px-3" required>
+                        <option value="">Seçin</option>
+                        <option value="Erkek">Erkek</option>
+                        <option value="Kadın">Kadın</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="PhoneNumber" class="form-label">Telefon Numarası</label>
+                    <input type="tel" id="PhoneNumber" name="PhoneNumber" class="form-control rounded-pill px-3" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="ProfilePhoto" class="form-label">Profil Fotoğrafı</label>
+                    <input type="file" id="ProfilePhoto" name="ProfilePhoto" class="form-control rounded-pill px-3" />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="City" class="form-label">İl</label>
+                    <input type="text" id="City" name="City" class="form-control rounded-pill px-3" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="District" class="form-label">İlçe</label>
+                    <input type="text" id="District" name="District" class="form-control rounded-pill px-3" required />
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="Neighborhood" class="form-label">Mahalle</label>
+                    <input type="text" id="Neighborhood" name="Neighborhood" class="form-control rounded-pill px-3" required />
+                </div>
+
+                <div class="col-md-12 mb-3">
+                    <label for="Interests" class="form-label">İlgi Alanları</label>
+                    <textarea id="Interests" name="Interests" class="form-control rounded px-3" rows="3"></textarea>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 rounded-pill" style="background-color: #007bff;">Kayıt Ol</button>
+        }
+    </div>
+</div>

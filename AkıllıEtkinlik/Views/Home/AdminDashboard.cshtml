@@ -1,0 +1,215 @@
+﻿
+@model IEnumerable<AkıllıEtkinlik.Models.Event>
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <title>Admin Dashboard - Etkinlikler</title>
+    <style>
+        body {
+            background: #f0f2f5;
+        }
+
+        .category-scroll-container {
+            display: flex;
+            align-items: center;
+            margin-top: 100px;
+        }
+
+        .arrow {
+            cursor: pointer;
+            font-size: 24px;
+            margin: 0 10px;
+            color: #007bff;
+        }
+
+        .category-scroll {
+            overflow-x: hidden;
+            white-space: nowrap;
+            flex-grow: 1;
+        }
+
+        .category-item {
+            display: inline-block;
+            margin-right: 15px;
+            padding: 10px;
+            background: #ffffff;
+            border-radius: 20px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            transition: background 0.3s, color 0.3s;
+        }
+
+            .category-item:hover {
+                background: #007bff;
+                color: #ffffff;
+            }
+
+     
+        .event-card {
+            margin: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .event-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .profile-container {
+            position: relative;
+            float: right;
+            margin-top: 10px;
+        }
+
+        .profile-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .profile-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 60px;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            width: 200px;
+            z-index: 1000;
+        }
+
+            .profile-dropdown a {
+                display: block;
+                padding: 10px;
+                color: #000;
+                text-decoration: none;
+            }
+
+                .profile-dropdown a:hover {
+                    background: #f8f9fa;
+                }
+    .btn-custom {
+        background-color: #007bff; /* Varsayılan mavi renk */
+        color: #fff;
+        font-weight: bold;
+        border-radius: 25px; /* Yuvarlak köşeler */
+        padding: 10px 20px; /* Daha büyük buton */
+        transition: all 0.3s ease; /* Geçiş animasyonu */
+        box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3); /* Gölgeli buton */
+    }
+
+    .btn-custom:hover {
+        background-color: #0056b3; /* Üzerine gelindiğinde koyulaşan renk */
+        box-shadow: 0 8px 20px rgba(0, 123, 255, 0.5); /* Üzerine gelindiğinde daha belirgin gölge */
+        transform: translateY(-2px); /* Hafif yükselme efekti */
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Profil Resmi -->
+        <div class="profile-container">
+            <img src="https://via.placeholder.com/50" alt="Profil Resmi" class="profile-image" id="profileImage">
+            <div class="profile-dropdown" id="profileDropdown">
+                <!--<a href="/Home/UpdateProfile">Bilgilerimi Güncelle</a>
+            <a href="/Home/CreateEvent">Etkinlik Oluştur</a>-->
+                <a href="/Home/EtkinlikleriOnayla">Etkinlikleri Onayla</a>
+                <a href="/Home/ManageEventsAdmin">Etkinlikleri Düzenle</a>
+                <a href="/Home/ManageUsers">Kullanıcıları Görüntüle</a>
+                <a href="/Home/Logout">Çıkış Yap</a>
+            </div>
+        </div>
+
+        <!-- Etkinlik Kategorileri -->
+        <div class="category-scroll-container my-5">
+            <i class="fas fa-chevron-left arrow" id="scroll-left"></i>
+            <div class="category-scroll">
+                <span class="category-item" data-category="all">Tüm Etkinlikler</span>
+                <span class="category-item" data-category="konser">Konser</span>
+                <span class="category-item" data-category="tiyatro">Tiyatro</span>
+                <span class="category-item" data-category="standup">Stand-Up</span>
+                <span class="category-item" data-category="festival">Festival</span>
+                <span class="category-item" data-category="soylesi">Söyleşi</span>
+                <span class="category-item" data-category="sergi">Sergi</span>
+                <span class="category-item" data-category="spor">Spor</span>
+                <span class="category-item" data-category="egitim">Eğitim</span>
+                <span class="category-item" data-category="workshop">Workshop</span>
+            </div>
+            <i class="fas fa-chevron-right arrow" id="scroll-right"></i>
+        </div>
+
+
+     
+        <!-- Etkinlik Kartları -->
+        <h3>Etkinlikler</h3>
+        <div class="row">
+            @foreach (var etkinlik in Model)
+            {
+                <div class="col-md-4">
+                    <div class="card event-card">
+                        <!-- Etkinlik Resmi -->
+                        <img src="@etkinlik.ResimYolu" alt="@etkinlik.EtkinlikAdi" class="event-card-image">
+                        <div class="card-body event-details">
+                            <h5 class="card-title">@etkinlik.EtkinlikAdi</h5>
+                            <p class="card-text"><i class="fas fa-map-marker-alt"></i> @etkinlik.Konum</p>
+                            <p class="card-text"><i class="fas fa-calendar-alt"></i> @etkinlik.Tarih.ToString("dd MMMM yyyy")</p>
+                            <a href="@Url.Action("EventDetailsCardAdmin", "Home", new { id = etkinlik.Id })" class="btn btn-primary">Detayları İncele</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+        <script>
+            $(document).ready(function () {
+                // Profil Resmine tıklayınca açılan menüyü göster/gizle
+                $('#profileImage').on('click', function () {
+                    $('#profileDropdown').toggle();
+                });
+
+               
+                // Etkinlik kategorilerini filtreleme
+                $('.category-item').on('click', function () {
+                    // Aktif kategori stilini değiştir
+                    $('.category-item').removeClass('active');
+                    $(this).addClass('active');
+
+                    var selectedCategory = $(this).data('category').toLowerCase();
+                    // AdminDashboard action'ına kategori parametresi ile yönlendirme yap
+                    window.location.href = '/Home/AdminDashboard?category=' + selectedCategory;
+                });
+
+                // Kategorileri sağa veya sola kaydırma
+                $('#scroll-left').on('click', function () {
+                    $('.category-scroll').animate({ scrollLeft: '-=200' }, 300);
+                });
+
+                $('#scroll-right').on('click', function () {
+                    $('.category-scroll').animate({ scrollLeft: '+=200' }, 300);
+                });
+
+                // Profil dropdown dışına tıklandığında menüyü gizle
+                $(document).on('click', function (event) {
+                    if (!$(event.target).closest('#profileImage, #profileDropdown').length) {
+                        $('#profileDropdown').hide();
+                    }
+                });
+            });
+        </script>
+
+
+</body>
+</html>

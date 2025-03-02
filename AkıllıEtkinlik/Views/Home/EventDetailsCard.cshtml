@@ -1,0 +1,180 @@
+﻿@model AkıllıEtkinlik.Models.Event
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.min.js"></script>
+    <title>@Model.EtkinlikAdi Detayları</title>
+    <style>
+        .event-details-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+        }
+
+        .event-image {
+            width: 50%;
+            height: auto;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .event-info {
+            font-size: 16px;
+        }
+
+            .event-info i {
+                color: #007bff;
+                margin-right: 10px;
+            }
+
+        .join-button {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .messages-container {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+            background-color: #f9f9f9;
+        }
+
+        .messages-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+
+        .message-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: #e9ecef;
+        }
+
+            .message-item strong {
+                color: #007bff;
+            }
+
+        .message-meta {
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        #map {
+            height: 400px;
+            width: 100%;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    @{
+        var address = $"{Model.Konum}";
+    }
+
+    <div class="container mt-5">
+        <div class="event-details-container">
+            <h2>@Model.EtkinlikAdi</h2>
+
+            <!-- Hata mesajını göster -->
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger" role="alert">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success" role="alert">
+                    @TempData["SuccessMessage"]
+                </div>
+            }
+
+
+            <img src="@Model.ResimYolu" alt="Etkinlik Resmi" class="event-image">
+            <div class="event-info">
+                <p>
+                    <i class="fas fa-map-marker-alt"></i> <strong>Konum:</strong> @Model.Konum
+                </p>
+                <p>
+                    <i class="fas fa-calendar-alt"></i> <strong>Tarih:</strong> @Model.Tarih.ToString("dd MMMM yyyy")
+                </p>
+                <p>
+                    <i class="fas fa-clock"></i> <strong>Saat:</strong> @Model.Saat
+                </p>
+                <p>
+                    <i class="fas fa-info-circle"></i> <strong>Açıklama:</strong> @Model.Aciklama
+                </p>
+                <p>
+                    <i class="fas fa-tags"></i> <strong>Kategori:</strong> @Model.Kategori
+                </p>
+            </div>
+
+            <div class="join-button">
+                <form action="@Url.Action("JoinEvent", "Home")" method="post">
+                    <input type="hidden" name="eventId" value="@Model.Id" />
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-user-plus"></i> Katıl
+                    </button>
+                </form>
+            </div>
+
+
+            <!-- Mesajlar Kısmı - Sadece Etkinliğe Katılanlar Görmeli -->
+            @if (TempData["ErrorMessage"] == null)
+            {
+                <div class="messages-container">
+                    <h4>Mesajlar</h4>
+                    <div class="messages-list">
+                        @if (ViewBag.Messages != null && ((List<AkıllıEtkinlik.Models.Mesaj>)ViewBag.Messages).Count > 0)
+                        {
+                            foreach (var mesaj in ViewBag.Messages as List<AkıllıEtkinlik.Models.Mesaj>)
+                            {
+                                <div class="message-item">
+                                    <strong>@mesaj.Gonderici.KullaniciAdi:</strong> @mesaj.MesajMetni
+                                    <div class="message-meta">
+                                        @mesaj.GonderimZamani.ToString("g")
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p>Bu etkinlikte henüz mesaj yok.</p>
+                        }
+                    </div>
+
+                    <!-- Mesaj Gönderme Formu -->
+                    <form action="@Url.Action("SendMessage", "Home")" method="post">
+                        <input type="hidden" name="EventId" value="@Model.Id" />
+                        <div class="form-group">
+                            <textarea class="form-control" name="MessageText" rows="3" placeholder="Mesajınızı yazın..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-2">Gönder</button>
+                    </form>
+                </div>
+            }
+
+        </div>
+    </div>
+    <a href="@Url.Action("EventMap", "Home", new { eventId = Model.Id })" class="btn btn-primary">Haritayı Görüntüle</a>
+   
+
+</body>
+</html>
+ 

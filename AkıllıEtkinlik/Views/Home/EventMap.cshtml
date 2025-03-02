@@ -1,0 +1,158 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kullanıcı ve Etkinlik Konumu</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <style>
+        #map {
+            height: 500px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .transport-options {
+            margin-top: 20px;
+        }
+
+        #info-box {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+            #info-box p {
+                margin: 5px 0;
+            }
+    </style>
+</head>
+<body>
+    <h1>Kullanıcı ve Etkinlik Konumu</h1>
+    <div class="transport-options">
+        <label for="transportMode">Taşıma Modu Seçin:</label>
+        <select id="transportMode">
+            <option value="driving">Araba</option>
+            <option value="cycling">Bisiklet</option>
+            <option value="walking">Yürüyerek</option>
+        </select>
+    </div>
+    <div id="map"></div>
+
+    <div id="info-box">
+        <p><b>Mesafe:</b> <span id="distance">-</span> km</p>
+        <p><b>Süre:</b> <span id="time">-</span> dakika</p>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const userLocation = @Html.Raw(ViewBag.UserLocation); // Kullanıcı konumu
+            const eventLocation = @Html.Raw(ViewBag.EventLocation); // Etkinlik konumu
+
+            if (!userLocation || !eventLocation) {
+                alert("Kullanıcı veya etkinlik konumu eksik.");
+                return;
+            }
+
+            const userAddress = `${userLocation.City}, ${userLocation.District}, ${userLocation.Neighborhood}`;
+            const eventAddress = eventLocation.Konum;
+
+            const map = L.map('map').setView([39.92077, 32.85411], 6); // Türkiye merkezli başlangıç
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 18,
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+
+            const geocodeService = `https://nominatim.openstreetmap.org/search?format=json&q=`;
+
+            Promise.all([
+                fetch(`${geocodeService}${encodeURIComponent(userAddress)}`).then(res => res.json()),
+                fetch(`${geocodeService}${encodeURIComponent(eventAddress)}`).then(res => res.json())
+            ]).then(data => {
+                const userData = data[0];
+                const eventData = data[1];
+
+                if (userData.length > 0 && eventData.length > 0) {
+                    const userLatLng = [parseFloat(userData[0].lat), parseFloat(userData[0].lon)];
+                    const eventLatLng = [parseFloat(eventData[0].lat), parseFloat(eventData[0].lon)];
+
+                    L.marker(userLatLng).addTo(map).bindPopup(`<b>Kullanıcı Konumu:</b> ${userAddress}`).openPopup();
+                    L.marker(eventLatLng).addTo(map).bindPopup(`<b>Etkinlik Konumu:</b> ${eventAddress}`).openPopup();
+
+                    const transportModeSelect = document.getElementById('transportMode');
+                    let routingControl;
+
+                    // Taşıma moduna göre hızları belirliyoruz (km/s)
+                    const speeds = {
+                        driving: 60,  // km/s
+                        cycling: 20,  // km/s
+                        walking: 5    // km/s
+                    };
+
+                    const distanceSpan = document.getElementById('distance');
+                    const timeSpan = document.getElementById('time');
+
+                    function createRoute(mode) {
+                        if (routingControl) {
+                            map.removeControl(routingControl);
+                        }
+
+                        routingControl = L.Routing.control({
+                            waypoints: [
+                                L.latLng(userLatLng),
+                                L.latLng(eventLatLng)
+                            ],
+                            routeWhileDragging: true,
+                            router: L.Routing.osrmv1({
+                                serviceUrl: 'https://router.project-osrm.org/route/v1',
+                                profile: mode
+                            }),
+                            lineOptions: {
+                                styles: [
+                                    {
+                                        color: mode === 'driving' ? 'blue' : mode === 'cycling' ? 'green' : 'red',
+                                        opacity: 0.7,
+                                        weight: 5
+                                    }
+                                ]
+                            },
+                            createMarker: function (i, wp) {
+                                return L.marker(wp.latLng);
+                            }
+                        })
+                        .on('routesfound', function (e) {
+                            const route = e.routes[0];
+                            const distance = route.summary.totalDistance / 1000; // km cinsinden mesafe
+                            const timeInMinutes = (distance / speeds[mode]) * 60; // Zaman hesaplama (dakika)
+
+                            // Mesafe ve süreyi güncelle
+                            distanceSpan.innerText = distance.toFixed(2);
+                            timeSpan.innerText = timeInMinutes.toFixed(2);
+                        })
+                        .addTo(map);
+                    }
+
+                    // İlk rota 'araba' seçeneğiyle oluşturulur
+                    createRoute('driving');
+
+                    // Kullanıcı taşıma modunu değiştirdiğinde rotayı güncelle
+                    transportModeSelect.addEventListener('change', function () {
+                        createRoute(transportModeSelect.value);
+                    });
+                } else {
+                    alert("Konumlar bulunamadı.");
+                }
+            }).catch(error => {
+                console.error("Geocode hatası:", error);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+﻿@model AkıllıEtkinlik.Models.Kullanici
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Bilgilerimi Güncelle</title>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Bilgilerimi Güncelle</h2>
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+        }
+
+        <!-- ModelState hatalarını listeleme -->
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <li>@error.ErrorMessage</li>
+                    }
+                </ul>
+            </div>
+        }
+
+        <form action="/Home/UpdateProfile" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="Id" value="@Model.Id" />
+
+            <div class="form-group">
+                <label for="KullaniciAdi">Kullanıcı Adı:</label>
+                <input type="text" class="form-control" id="KullaniciAdi" name="KullaniciAdi" value="@Model.KullaniciAdi" required>
+            </div>
+
+            <div class="form-group">
+                <label for="Email">Email:</label>
+                <input type="email" class="form-control" id="Email" name="Email" value="@Model.Email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="Ad">Ad:</label>
+                <input type="text" class="form-control" id="Ad" name="Ad" value="@Model.Ad" required>
+            </div>
+
+            <div class="form-group">
+                <label for="Soyad">Soyad:</label>
+                <input type="text" class="form-control" id="Soyad" name="Soyad" value="@Model.Soyad" required>
+            </div>
+
+            <div class="form-group">
+                <label for="DogumTarihi">Doğum Tarihi:</label>
+                <input type="date" class="form-control" id="DogumTarihi" name="DogumTarihi" value="@Model.DogumTarihi.ToString("yyyy-MM-dd")" required>
+            </div>
+
+            <div class="form-group">
+                <label for="Cinsiyet">Cinsiyet:</label>
+                <select class="form-control" id="Cinsiyet" name="Cinsiyet">
+                    <option value="Erkek" @(Model.Cinsiyet == "Erkek" ? "selected" : "")>Erkek</option>
+                    <option value="Kadın" @(Model.Cinsiyet == "Kadın" ? "selected" : "")>Kadın</option>
+                    <option value="Diğer" @(Model.Cinsiyet == "Diğer" ? "selected" : "")>Diğer</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="TelefonNumarasi">Telefon Numarası:</label>
+                <input type="text" class="form-control" id="TelefonNumarasi" name="TelefonNumarasi" value="@Model.TelefonNumarasi" required>
+            </div>
+
+            <div class="form-group">
+                <label for="IlgiAlanlari">İlgi Alanları:</label>
+                <textarea class="form-control" id="IlgiAlanlari" name="IlgiAlanlari">@Model.IlgiAlanlari</textarea>
+            </div>
+
+            <!-- Yeni Şifre ve Onay -->
+            <div class="form-group">
+                <label for="Sifre">Yeni Şifre:</label>
+                <input type="password" class="form-control" id="Sifre" name="Sifre">
+            </div>
+            <div class="form-group">
+                <label for="ConfirmSifre">Şifreyi Onayla:</label>
+                <input type="password" class="form-control" id="ConfirmSifre" name="ConfirmSifre">
+            </div>
+
+            <div class="form-group">
+                <label for="ProfilFoto">Profil Fotoğrafı:</label>
+                <input type="file" class="form-control-file" id="ProfilFoto" name="ProfilFoto">
+                @if (!string.IsNullOrEmpty(Model.ProfilFoto))
+                {
+                    <img src="@Url.Content(Model.ProfilFoto)" alt="Profil Fotoğrafı" class="img-thumbnail mt-2" width="150">
+                }
+            </div>
+
+            <button type="submit" class="btn btn-primary">Bilgilerimi Güncelle</button>
+        </form>
+    </div>
+</body>
+</html>
